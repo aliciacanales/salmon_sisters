@@ -76,6 +76,15 @@ clean_coho <- coho[-1,] %>%
 
 
 ```{r}
+# plot 21 time series. 4 x 5 panels. This would be for trends
+# calculate returns --> we the need to plot this and see if there is an absensce of trend or not
+# x axis is time y axis is return calculation
+# mean over time for each fishery 
+
+# verify that there are duplicates
+# variance of Returns
+# calculate covariance --> there should just be a function for this. maybe find a way to put the whole matrix in the function
+
 
 ```
 
