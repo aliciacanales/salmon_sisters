@@ -16,13 +16,14 @@ library(tidyverse)
 library(here)
 library(janitor)
 library(readxl)
+library(tsibble)
 ```
 
 ### Importing data **this is only the first page of the excel sheet**
 ```{r}
 #your mom
 
-coho <- readxl::read_xlsx(here('data', 'OC Coho Abundance.xlsx'),skip = 1, col_names = TRUE) %>%
+coho <- readxl::read_xlsx(here('data', 'OC Coho Abundance.xlsx')) %>% #,skip = 1, col_names = TRUE) %>%
   clean_names() %>% 
   distinct()
 
@@ -88,5 +89,31 @@ clean_coho <- coho[-1,] %>%
 
 
 ```
+
+
+## Annual time series
+```{r}
+# #Need to convert year in date format for tibble to plot time series
+# coho_date <- coho %>% 
+#  as.Date(as.character(Year), format = "%Y")
+#  #mutate(date = lubridate::mdy(date)) #Convert date#
+
+# coho_ts <- coho %>%
+#  as_tsibble(key = NULL, index = date) #Convert to tibble
+
+#p_coho <- ggplot(data = coho, aes(x = Year, y = Alsea)) +
+#  geom_line(color = "#DCE319FF") +
+#  labs(x = " ",
+#       y = " ",
+#       title = "Daily Fish Passage Counts at Willamette Falls",
+#       subtitle = "Coho") +
+#  theme_minimal()
+
+# p_coho
+```
+
+
+
+
 
 
