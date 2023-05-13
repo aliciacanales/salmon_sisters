@@ -17,6 +17,9 @@ library(here)
 library(janitor)
 library(readxl)
 library(tsibble)
+library(lubridate)
+library(feasts)
+library(patchwork)
 ```
 
 ### Importing data **this is only the first page of the excel sheet**
@@ -35,7 +38,7 @@ coho_2 <- readxl::read_xlsx(here('data', 'wild_spawner_abundance.xlsx')) %>%
 
 
 ## changing the names of the columns
-colnames(coho) <- coho[1,]
+#colnames(coho) <- coho[1,] #Removed first column of data set so don't think this for now (I think - Olivia)
 
 ## making things more tidy
 clean_coho <- coho[-1,] %>% 
@@ -93,24 +96,89 @@ clean_coho <- coho[-1,] %>%
 
 ## Annual time series
 ```{r}
-# #Need to convert year in date format for tibble to plot time series
-# coho_date <- coho %>% 
-#  as.Date(as.character(Year), format = "%Y")
-#  #mutate(date = lubridate::mdy(date)) #Convert date#
+coho_yr <- coho %>%
+  mutate(date = lubridate::mdy(year)) #Convert to date for tibble
 
-# coho_ts <- coho %>%
-#  as_tsibble(key = NULL, index = date) #Convert to tibble
+coho_ts <- coho_yr %>%
+ as_tsibble(key = NULL, index = year) #Convert to tibble for timeseries
 
-#p_coho <- ggplot(data = coho, aes(x = Year, y = Alsea)) +
-#  geom_line(color = "#DCE319FF") +
-#  labs(x = " ",
-#       y = " ",
-#       title = "Daily Fish Passage Counts at Willamette Falls",
-#       subtitle = "Coho") +
-#  theme_minimal()
+pop_alsea <- ggplot(data = coho_ts, aes(x = year, y = alsea)) +
+  geom_line(color = "#453781FF") +
+  scale_x_continuous(breaks=seq(1994, 2019, by = 1)) +
+  labs(x = "Year",
+      y = "Population Count",
+      title = "Alsea") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
 
-# p_coho
+pop_beaver <- ggplot(data = coho_ts, aes(x = year, y = beaver)) +
+  geom_line(color = "#453781FF") +
+  scale_x_continuous(breaks=seq(1994, 2019, by = 1)) +
+  labs(x = "Year",
+      y = "Population Count",
+      title = "Beaver") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+
+pop_coos <- ggplot(data = coho_ts, aes(x = year, y = coos)) +
+  geom_line(color = "#453781FF") +
+  scale_x_continuous(breaks=seq(1994, 2019, by = 1)) +
+  labs(x = "Year",
+      y = "Population Count",
+      title = "Coos") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+
+pop_coquille <- ggplot(data = coho_ts, aes(x = year, y = coquille)) +
+  geom_line(color = "#453781FF") +
+  scale_x_continuous(breaks=seq(1994, 2019, by = 1)) +
+  labs(x = "Year",
+      y = "Population Count",
+      title = "Coquille") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+
+pop_floras <- ggplot(data = coho_ts, aes(x = year, y = floras)) +
+  geom_line(color = "#453781FF") +
+  scale_x_continuous(breaks=seq(1994, 2019, by = 1)) +
+  labs(x = "Year",
+      y = "Population Count",
+      title = "Floras") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+
+pop_lower_umpqua <- ggplot(data = coho_ts, aes(x = year, y = lower_umpqua)) +
+  geom_line(color = "#453781FF") +
+  scale_x_continuous(breaks=seq(1994, 2019, by = 1)) +
+  labs(x = "Year",
+      y = "Population Count",
+      title = "Lower Umpqua") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+
+pop_middle_umpqua <- ggplot(data = coho_ts, aes(x = year, y = middle_umpqua)) +
+  geom_line(color = "#453781FF") +
+  scale_x_continuous(breaks=seq(1994, 2019, by = 1)) +
+  labs(x = "Year",
+      y = "Population Count",
+      title = "Middle Umpqua") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+
+
+pop_alsea
+pop_beaver
+pop_coos
+pop_coquille
+pop_floras
+pop_lower_umpqua
+pop_middle_umpqua
 ```
+
+```{r}
+patchwork::plot_layout(pop_alsea + pop_beaver + pop_coos + pop_coquille + pop_floras + pop_lower_umpqua + pop_middle_umpqua)
+```
+
 
 
 
