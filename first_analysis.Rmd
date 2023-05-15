@@ -52,35 +52,6 @@ clean_coho <- coho[-1,] %>%
 ## readxl is a package but since we only need one function from it we don't have to call the whole thing from our library. In the future, if we see a package that we only need one function from we can call it within a code chunk with '::' and the desired function following.
 ```
 
-### Importing all the different pages of the excel sheet
-```{r}
-# # Read the Excel file
-# excel_file <- read_excel("/Users/aliciacanales/salmon_stocks/salmon_sisters/data/OC Coho Abundance.xlsx", sheet = NULL, col_names = TRUE)
-# 
-# # Get the sheet names
-# sheet_names <- excel_sheets("/Users/aliciacanales/salmon_stocks/salmon_sisters/data/OC Coho Abundance.xlsx")
-# 
-# # Create a list of data frames, one for each sheet
-# df_list <- lapply(sheet_names,
-#                   function(sheet) read_excel("/Users/aliciacanales/salmon_stocks/salmon_sisters/data/OC Coho Abundance.xlsx",
-#                   sheet = sheet))
-# 
-# # Assign each data frame to a separate variable with a descriptive name
-# for (i in seq_along(df_list)) {
-#   assign(sheet_names[i], df_list[[i]])
-# }
-# 
-# # Renaming all the files to make more tidy
-# wild_spawner_abundance <- `Wild Spawner Abundance` %>%
-#   clean_names()
-# 
-# total_wild_abundance <- `Total Wild Abundance` %>%
-#   clean_names()
-# 
-# harvested_wild_fish <- `Harvested Wild Fish` %>%
-#   clean_names()
-```
-
 
 ```{r}
 # plot 21 time series. 4 x 5 panels. This would be for trends
