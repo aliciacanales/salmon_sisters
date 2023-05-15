@@ -57,7 +57,7 @@ clean_coho <- coho[-1,] %>%
 # plot 21 time series. 4 x 5 panels. This would be for trends
 # calculate returns --> we the need to plot this and see if there is an absensce of trend or not
 # x axis is time y axis is return calculation
-# mean over time for each fishery 
+# mean over time 
 
 # verify that there are duplicates
 # variance of Returns
