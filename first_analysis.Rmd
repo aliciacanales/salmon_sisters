@@ -8,7 +8,8 @@ output:
 ---
 
 ```{r setup, include=FALSE, message=FALSE, echo=TRUE}
-knitr::opts_chunk$set(echo = TRUE, include=FALSE, message=FALSE)
+knitr::opts_chunk$set(echo = TRUE, results=FALSE, message=FALSE)
+# removed "include" to plot figues on the Markdown
 ```
 
 ```{r}
@@ -20,6 +21,7 @@ library(tsibble)
 library(lubridate)
 library(feasts)
 library(patchwork)
+library(kableExtra)
 ```
 
 ### Importing data **this is only the first page of the excel sheet**
@@ -94,7 +96,7 @@ clean_coho <- coho[-1,] %>%
 ```
 
 
-## Annual time series
+## Create figures of each population from 1994-2019
 ```{r}
 coho_yr <- coho %>%
   mutate(date = lubridate::mdy(year)) #Convert to date for tibble
@@ -292,44 +294,81 @@ pop_yaquina <- ggplot(data = coho_ts, aes(x = year, y = yaquina)) +
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
 
 
-
-
-pop_alsea
-pop_beaver
-pop_coos
-pop_coquille
-pop_floras
-pop_lower_umpqua
-pop_middle_umpqua
-pop_necanicum
-pop_nehalem
-pop_nestucca
-pop_north_umpqua
-pop_salmon
-pop_siletz
-pop_siltcoos
-pop_siuslaw
-pop_sixes
-pop_south_umpqua
-pop_tahkenitch
-pop_tenmile
-pop_tillamook
-pop_yaquina
+#pop_alsea
+#pop_beaver
+#pop_coos
+#pop_coquille
+#pop_floras
+#pop_lower_umpqua
+#pop_middle_umpqua
+#pop_necanicum
+#pop_nehalem
+#pop_nestucca
+#pop_north_umpqua
+#pop_salmon
+#pop_siletz
+#pop_siltcoos
+#pop_siuslaw
+#pop_sixes
+#pop_south_umpqua
+#pop_tahkenitch
+#pop_tenmile
+#pop_tillamook
+#pop_yaquina
 ```
 
+#Panel of figures of Y(it) - Annual population for each independent population
 ```{r}
-patchwork::plot_layout(pop_alsea + pop_beaver + pop_coos + pop_coquille + pop_floras + pop_lower_umpqua)
+patchwork::plot_layout(pop_alsea + pop_beaver + pop_coos + pop_coquille)
 
-patchwork::plot_layout(pop_middle_umpqua + pop_necanicum + pop_nehalem + pop_nestucca + pop_north_umpqua + pop_salmon)
+patchwork::plot_layout(pop_floras + pop_lower_umpqua + pop_middle_umpqua + pop_necanicum)
 
-patchwork::plot_layout(pop_siletz + pop_siltcoos + pop_siuslaw + pop_sixes + pop_south_umpqua + pop_tahkenitch)
+patchwork::plot_layout(pop_nehalem + pop_nestucca + pop_north_umpqua + pop_salmon)
 
-patchwork::plot_layout(pop_tenmile + pop_tillamook / pop_yaquina)
+patchwork::plot_layout(pop_siletz + pop_siltcoos + pop_siuslaw + pop_sixes)
+
+patchwork::plot_layout(pop_south_umpqua + pop_tahkenitch + pop_tenmile + pop_tillamook)
+
+patchwork::plot_layout(pop_yaquina)
 ```
 
 
+## Calculate sample means of each population
+```{r}
+#This is more concise in the next code chunk, but I thought I would leave this here in case we don't want to use the sapply function.
 
+sample_means <- colMeans(coho)
 
+kable(sample_means, format = "markdown", digits = 3,caption = "**Sample Means**")
+```
 
+## Calculate Mean, Variance, SD, Covariance of each population
+```{r}
+#Just learned about the sapply function and it is SO COOL. #When I compare these mean/var/sd to those that I manually calculated in excel, they don't match. Can someone check this? Thanks! - Olivia
+pop_mean <- sapply(coho, mean)
+pop_variance <- sapply(coho, var)
+pop_sd <- sapply(coho, sd)
+cov(coho)
+
+# data check
+mean(coho$alsea)
+var(coho$alsea)
+sd(coho$alsea)
+cov(coho$alsea, coho$beaver)
+
+df1 <- data.frame(pop_mean, pop_variance, pop_sd) #combine data into one data frame
+
+## In case we need to get the variance of a population (instead of a sample):
+# var_pop <- function(x) {
+#   mean((x-mean(x))^2)
+# }
+
+# var_pop(coho$alsea)
+```
+
+```{r, results = TRUE}
+# Plot table
+kable(df1, format = "markdown")
+```
 
 
