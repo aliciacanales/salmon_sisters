@@ -315,7 +315,8 @@ kable(sample_means, format = "markdown", digits = 3,caption = "**Sample Means**"
 
 ## Calculate Mean, Variance, SD, Covariance of each population
 ```{r}
-#Just learned about the sapply function and it is SO COOL. #When I compare these mean/var/sd to those that I manually calculated in excel, they don't match. Can someone check this? Thanks! - Olivia
+#Just learned about the sapply function and it is SO COOL. #When I compare these mean/var/sd to those that I manually calculated in excel, they don't match. Can someone check this? Thanks! - Olivia 
+## Did you make sure you took out the duplicates in the excel sheet? Cause I only took them out in R
 pop_mean <- sapply(coho, mean)
 pop_variance <- sapply(coho, var)
 pop_sd <- sapply(coho, sd)
