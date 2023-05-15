@@ -22,6 +22,7 @@ library(lubridate)
 library(feasts)
 library(patchwork)
 library(kableExtra)
+library(purrr)
 ```
 
 ### Importing data **this is only the first page of the excel sheet**
@@ -344,4 +345,15 @@ df1 <- data.frame(pop_mean, pop_variance, pop_sd) #combine data into one data fr
 kable(df1, format = "markdown")
 ```
 
+# Calculating R(it) -- Returns
+```{r}
+return <- function(x0, x1){
+  rt = (x1/x0) - 1
+  return(rt)
+} # essentially this is the equation we want to apply to all of the population years. X0 being count of population at a certain T(time) and X1 being the count of the following year. Correct me if i'm wrong? 
+
+map_df(coho_ts$alsea, .f = return) # I can't figure out how to tell r to make the first cell = x0 and the cell directly under it = x1. 
+
+
+```
 
