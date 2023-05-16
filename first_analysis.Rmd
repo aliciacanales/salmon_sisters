@@ -358,7 +358,7 @@ calculate_returns <- function(data) {
   return(rt)
 } # i-1 is the current population for whatever year we are looking at and i is the initial population from the previous year
 
-returns_yr <- data.frame(apply(coho[2:22], 2, calculate_returns))
+returns <- data.frame(apply(coho[2:22], 2, calculate_returns))
 
 ```
 
