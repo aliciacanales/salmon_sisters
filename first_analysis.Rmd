@@ -559,11 +559,16 @@ rt_yaquina <- ggplot(data = return_ts, aes(x = year, y = yaquina)) +
       title = "Yaquina") +
   theme_bw() +
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
-
-
 ```
 
 
+
+#Panel of figures of R(it) - Annual returns for each independent population
+```{r}
+patchwork::plot_layout(rt_alsea + rt_beaver + rt_coos + rt_coquille)
+
+patchwork::plot_layout(rt_floras + rt_lower_umpqua + rt_middle_umpqua + rt_necanicum)
+```
 
 
 
