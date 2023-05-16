@@ -65,7 +65,7 @@ clean_coho <- coho[-1,] %>%
 ```
 
 
-## Create figures of each population from 1994-2019
+# Create figures of each population from 1994-2019
 ```{r}
 coho_yr <- coho %>%
   mutate(date = lubridate::mdy(year)) #Convert to date for tibble
@@ -302,7 +302,7 @@ patchwork::plot_layout(pop_yaquina)
 ```
 
 
-## Calculate sample means of each population
+#Calculate sample means of each population
 ```{r}
 #This is more concise in the next code chunk, but I thought I would leave this here in case we don't want to use the sapply function.
 
@@ -311,15 +311,14 @@ sample_means <- colMeans(coho)
 kable(sample_means, format = "markdown", digits = 3,caption = "**Sample Means**")
 ```
 
-## Calculate Mean, Variance, SD, Covariance of each population
+# Calculate Mean, Variance, SD
 ```{r}
 #Just learned about the sapply function and it is SO COOL. #When I compare these mean/var/sd to those that I manually calculated in excel, they don't match. Can someone check this? Thanks! - Olivia 
 ## Did you make sure you took out the duplicates in the excel sheet? Cause I only took them out in R. I just checked in excel and they match!!
 
-pop_mean <- sapply(coho, mean)
-pop_variance <- sapply(coho, var)
-pop_sd <- sapply(coho, sd)
-cov(coho)
+pop_mean <- sapply(coho[2:22], mean)
+pop_variance <- sapply(coho[2:22], var)
+pop_sd <- sapply(coho[2:22], sd)
 
 # data check
 mean(coho$alsea)
@@ -329,6 +328,14 @@ cov(coho$alsea, coho$beaver)
 
 df1 <- data.frame(pop_mean, pop_variance, pop_sd) #combine data into one data frame
 
+#Plot table
+table_df1 <- df1 %>% 
+  kable(col.names = c("Mean", "Variance", "Standard Deviation")) %>% 
+  kable_styling(bootstrap_options = "striped",
+                position = "left", full_width = FALSE)
+
+table_df1
+
 ## In case we need to get the variance of a population (instead of a sample):
 # var_pop <- function(x) {
 #   mean((x-mean(x))^2)
@@ -337,9 +344,19 @@ df1 <- data.frame(pop_mean, pop_variance, pop_sd) #combine data into one data fr
 # var_pop(coho$alsea)
 ```
 
+
+# Calculate covariance of each population
 ```{r, results = TRUE}
-# Plot table
-kable(df1, format = "markdown")
+#Calculate covariance
+pop_cov <- cov(coho[2:22])
+
+# pop_cov
+
+# Only show bottom triangle of covariances
+upper<-pop_cov
+upper[upper.tri(pop_cov)] <-""
+upper<-as.data.frame(upper)
+upper
 ```
 
 # Calculating R(it) -- Returns
@@ -568,6 +585,14 @@ rt_yaquina <- ggplot(data = return_ts, aes(x = year, y = yaquina)) +
 patchwork::plot_layout(rt_alsea + rt_beaver + rt_coos + rt_coquille)
 
 patchwork::plot_layout(rt_floras + rt_lower_umpqua + rt_middle_umpqua + rt_necanicum)
+
+patchwork::plot_layout(rt_nehalem + rt_nestucca + rt_north_umpqua + rt_salmon)
+
+patchwork::plot_layout(rt_siletz + rt_siltcoos + rt_siuslaw + rt_sixes)
+
+patchwork::plot_layout(rt_south_umpqua + rt_tahkenitch + rt_tenmile + rt_tillamook)
+
+patchwork::plot_layout(rt_yaquina)
 ```
 
 
