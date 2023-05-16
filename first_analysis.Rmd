@@ -23,6 +23,7 @@ library(feasts)
 library(patchwork)
 library(kableExtra)
 library(purrr)
+library(PerformanceAnalytics)
 ```
 
 ### Importing data **this is only the first page of the excel sheet**
@@ -347,10 +348,21 @@ kable(df1, format = "markdown")
 
 # Calculating R(it) -- Returns
 ```{r}
-return <- function(x0, x1){
-  rt = x0/x1 - 1
-  return(rt)
-} 
+# return <- function(x0, x1){
+#   rt = x0/x1 - 1
+#   return(rt)
+# } 
 ## in this case x0 is our Yit-1 or the year after the initial year and x1 is our Yit or the initial year
+
+calculate_returns <- function(data) {
+  rt <- numeric(length(data) - 1)  
+  for (i in 2:length(data)) {
+    rt[i-1] <- (data[i] / data[i-1]) - 1
+  }
+  return(rt)
+}
+
+alsea_returns <- apply(coho["alsea"], 2, calculate_returns)
+print(alsea_returns)
 ```
 
