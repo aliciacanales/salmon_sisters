@@ -351,7 +351,7 @@ table_df1
 ```
 
 
-# Calculate covariance of each population
+# Calculate covariance of each return
 ```{r, results = TRUE}
 #Calculate covariance
 pop_cov <- cov(coho[2:22])
