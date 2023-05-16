@@ -28,8 +28,6 @@ library(PerformanceAnalytics)
 
 ### Importing data **this is only the first page of the excel sheet**
 ```{r}
-#your mom
-
 coho <- readxl::read_xlsx(here('data', 'OC Coho Abundance.xlsx')) %>% #,skip = 1, col_names = TRUE) %>%
   clean_names() %>% 
   distinct()
@@ -50,8 +48,6 @@ clean_coho <- coho[-1,] %>%
   pivot_longer('alsea':'yaquina',
                names_to = 'name',
                values_to = 'count')
-
-## readxl is a package but since we only need one function from it we don't have to call the whole thing from our library. In the future, if we see a package that we only need one function from we can call it within a code chunk with '::' and the desired function following.
 ```
 
 
@@ -362,7 +358,228 @@ calculate_returns <- function(data) {
   return(rt)
 }
 
-returns <- apply(coho[2:21], 2, calculate_returns)
-print(returns)
+returns_yr <- data.frame(apply(coho[2:22], 2, calculate_returns))
+
 ```
+
+# Plotting R(it) -- Returns
+```{r}
+# combining date column to new returns df
+returns_yr<- cbind(returns, coho_yr$year[-1]) %>% 
+  rename('year' = 'coho_yr$year[-1]')
+
+return_ts <- returns_yr %>%
+ as_tsibble(key = NULL, index = year)
+
+rt_alsea <- ggplot(data = return_ts, aes(x = year, y = alsea)) +
+  geom_line(color = "#453781FF") +
+  scale_x_continuous(breaks=seq(1994, 2019, by = 1)) +
+  labs(x = "Year",
+      y = "Return",
+      title = "Alsea") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+
+rt_beaver <- ggplot(data = return_ts, aes(x = year, y = beaver)) +
+  geom_line(color = "#453781FF") +
+  scale_x_continuous(breaks=seq(1994, 2019, by = 1)) +
+  labs(x = "Year",
+      y = "Return",
+      title = "Beaver") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+
+rt_coos <- ggplot(data = return_ts, aes(x = year, y = coos)) +
+  geom_line(color = "#453781FF") +
+  scale_x_continuous(breaks=seq(1994, 2019, by = 1)) +
+  labs(x = "Year",
+      y = "Return",
+      title = "Coos") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+
+rt_coquille <- ggplot(data = return_ts, aes(x = year, y = coquille)) +
+  geom_line(color = "#453781FF") +
+  scale_x_continuous(breaks=seq(1994, 2019, by = 1)) +
+  labs(x = "Year",
+      y = "Return",
+      title = "Coquille") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+
+rt_floras <- ggplot(data = return_ts, aes(x = year, y = floras)) +
+  geom_line(color = "#453781FF") +
+  scale_x_continuous(breaks=seq(1994, 2019, by = 1)) +
+  labs(x = "Year",
+      y = "Return",
+      title = "Floras") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+
+rt_lower_umpqua <- ggplot(data = return_ts, aes(x = year, y = lower_umpqua)) +
+  geom_line(color = "#453781FF") +
+  scale_x_continuous(breaks=seq(1994, 2019, by = 1)) +
+  labs(x = "Year",
+      y = "Return",
+      title = "Lower Umpqua") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+
+rt_middle_umpqua <- ggplot(data = return_ts, aes(x = year, y = middle_umpqua)) +
+  geom_line(color = "#453781FF") +
+  scale_x_continuous(breaks=seq(1994, 2019, by = 1)) +
+  labs(x = "Year",
+      y = "Return",
+      title = "Middle Umpqua") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+
+rt_necanicum <- ggplot(data = return_ts, aes(x = year, y = necanicum)) +
+  geom_line(color = "#453781FF") +
+  scale_x_continuous(breaks=seq(1994, 2019, by = 1)) +
+  labs(x = "Year",
+      y = "Return",
+      title = "Necanicum") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+
+rt_nehalem <- ggplot(data = return_ts, aes(x = year, y = nehalem)) +
+  geom_line(color = "#453781FF") +
+  scale_x_continuous(breaks=seq(1994, 2019, by = 1)) +
+  labs(x = "Year",
+      y = "Return",
+      title = "Mehalem") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+
+rt_nestucca <- ggplot(data = return_ts, aes(x = year, y = nestucca)) +
+  geom_line(color = "#453781FF") +
+  scale_x_continuous(breaks=seq(1994, 2019, by = 1)) +
+  labs(x = "Year",
+      y = "Return",
+      title = "Nestucca") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+
+rt_north_umpqua <- ggplot(data = return_ts, aes(x = year, y = north_umpqua)) +
+  geom_line(color = "#453781FF") +
+  scale_x_continuous(breaks=seq(1994, 2019, by = 1)) +
+  labs(x = "Year",
+      y = "Return",
+      title = "North Umpqua") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+
+rt_salmon <- ggplot(data = return_ts, aes(x = year, y = salmon)) +
+  geom_line(color = "#453781FF") +
+  scale_x_continuous(breaks=seq(1994, 2019, by = 1)) +
+  labs(x = "Year",
+      y = "Return",
+      title = "Salmon") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+
+rt_siletz <- ggplot(data = return_ts, aes(x = year, y = siletz)) +
+  geom_line(color = "#453781FF") +
+  scale_x_continuous(breaks=seq(1994, 2019, by = 1)) +
+  labs(x = "Year",
+      y = "Return",
+      title = "Siletz") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+
+rt_siltcoos <- ggplot(data = return_ts, aes(x = year, y = siltcoos)) +
+  geom_line(color = "#453781FF") +
+  scale_x_continuous(breaks=seq(1994, 2019, by = 1)) +
+  labs(x = "Year",
+      y = "Return",
+      title = "Siltcoos") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+
+rt_siuslaw <- ggplot(data = return_ts, aes(x = year, y = siuslaw)) +
+  geom_line(color = "#453781FF") +
+  scale_x_continuous(breaks=seq(1994, 2019, by = 1)) +
+  labs(x = "Year",
+      y = "Return",
+      title = "Siuslaw") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+
+rt_sixes <- ggplot(data = return_ts, aes(x = year, y = sixes)) +
+  geom_line(color = "#453781FF") +
+  scale_x_continuous(breaks=seq(1994, 2019, by = 1)) +
+  labs(x = "Year",
+      y = "Return",
+      title = "Sixes") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+
+rt_south_umpqua <- ggplot(data = return_ts, aes(x = year, y = south_umpqua)) +
+  geom_line(color = "#453781FF") +
+  scale_x_continuous(breaks=seq(1994, 2019, by = 1)) +
+  labs(x = "Year",
+      y = "Return",
+      title = "South Umpqua") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+
+rt_tahkenitch <- ggplot(data = return_ts, aes(x = year, y = tahkenitch)) +
+  geom_line(color = "#453781FF") +
+  scale_x_continuous(breaks=seq(1994, 2019, by = 1)) +
+  labs(x = "Year",
+      y = "Return",
+      title = "Tahkenitch") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+
+rt_tenmile <- ggplot(data = return_ts, aes(x = year, y = tenmile)) +
+  geom_line(color = "#453781FF") +
+  scale_x_continuous(breaks=seq(1994, 2019, by = 1)) +
+  labs(x = "Year",
+      y = "Return",
+      title = "Tenmile") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+
+rt_tillamook <- ggplot(data = return_ts, aes(x = year, y = tillamook)) +
+  geom_line(color = "#453781FF") +
+  scale_x_continuous(breaks=seq(1994, 2019, by = 1)) +
+  labs(x = "Year",
+      y = "Return",
+      title = "Tillamook") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+
+rt_yaquina <- ggplot(data = return_ts, aes(x = year, y = yaquina)) +
+  geom_line(color = "#453781FF") +
+  scale_x_continuous(breaks=seq(1994, 2019, by = 1)) +
+  labs(x = "Year",
+      y = "Return",
+      title = "Yaquina") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
