@@ -347,11 +347,10 @@ kable(df1, format = "markdown")
 
 # Calculating R(it) -- Returns
 ```{r}
-return <- function(df){
-  rt = df$col1[2]/df$col1[1] - 1
+return <- function(x0, x1){
+  rt = x0/x1 - 1
   return(rt)
-} # essentially this is the equation we want to apply to all of the population years. X0 being count of population at a certain T(time) and X1 being the count of the following year. Correct me if i'm wrong? 
-
-
+} 
+## in this case x0 is our Yit-1 or the year after the initial year and x1 is our Yit or the initial year
 ```
 
