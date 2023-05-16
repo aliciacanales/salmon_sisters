@@ -369,6 +369,25 @@ upper
 
 ```
 
+```{r, results = TRUE}
+#Calculate covariance
+return_cov <- cov(returns)
+
+# pop_cov
+
+# Only show bottom triangle of covariances
+upper<-return_cov
+upper[upper.tri(return_cov)] <-""
+upper<-as.data.frame(upper)
+upper
+
+
+
+
+```
+
+
+
 # Calculating R(it) -- Returns
 ```{r}
 # return <- function(x0, x1){
