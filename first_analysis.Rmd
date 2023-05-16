@@ -353,10 +353,10 @@ kable(df1, format = "markdown")
 calculate_returns <- function(data) {
   rt <- numeric(length(data) - 1)  
   for (i in 2:length(data)) {
-    rt[i-1] <- (data[i] / data[i-1]) - 1
+    rt[i-1] <- (data[i-1] / data[i]) - 1
   }
   return(rt)
-}
+} # i-1 is the current population for whatever year we are looking at and i is the initial population from the previous year
 
 returns_yr <- data.frame(apply(coho[2:22], 2, calculate_returns))
 
