@@ -362,7 +362,7 @@ calculate_returns <- function(data) {
   return(rt)
 }
 
-alsea_returns <- apply(coho["alsea"], 2, calculate_returns)
-print(alsea_returns)
+returns <- apply(coho[2:21], 2, calculate_returns)
+print(returns)
 ```
 
