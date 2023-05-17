@@ -320,14 +320,6 @@ pop_mean <- sapply(coho[2:22], mean)
 pop_variance <- sapply(coho[2:22], var)
 pop_sd <- sapply(coho[2:22], sd)
 
-
-# calculation for returns
-return_mean <- sapply(returns, mean)
-return_variance <- sapply(returns, var)
-return_sd <- sapply(returns, sd)
-df2 <- data.frame(return_mean, return_variance, return_sd)
-
-
 # data check
 mean(coho$alsea)
 var(coho$alsea)
@@ -366,26 +358,7 @@ upper[upper.tri(pop_cov)] <-""
 upper<-as.data.frame(upper)
 upper
 
-
-
-
 ```
-
-```{r, results = TRUE}
-#Calculate covariance
-return_cov <- cov(returns)
-
-# pop_cov
-
-# Only show bottom triangle of covariances
-upper<-return_cov
-upper[upper.tri(return_cov)] <-""
-upper<-as.data.frame(upper)
-upper
-
-return_cov
-```
-
 
 
 # Calculating R(it) -- Returns
@@ -406,6 +379,33 @@ calculate_returns <- function(data) {
 
 returns <- data.frame(apply(coho[2:22], 2, calculate_returns))
 
+```
+
+
+# Calculation for mean, sd, variance -- returns
+```{r}
+# calculation for returns
+return_mean <- sapply(returns, mean)
+return_variance <- sapply(returns, var)
+return_sd <- sapply(returns, sd)
+df2 <- data.frame(return_mean, return_variance, return_sd)
+
+```
+
+# Calculation for covariance -- returns
+```{r, results = TRUE}
+#Calculate covariance
+return_cov <- cov(returns)
+
+# pop_cov
+
+# Only show bottom triangle of covariances
+upper<-return_cov
+upper[upper.tri(return_cov)] <-""
+upper<-as.data.frame(upper)
+upper
+
+return_cov
 ```
 
 # Plotting R(it) -- Returns
