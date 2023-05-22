@@ -23,7 +23,6 @@ library(feasts)
 library(patchwork)
 library(kableExtra)
 library(purrr)
-library(PerformanceAnalytics)
 ```
 
 ### Importing data **this is only the first page of the excel sheet**
@@ -68,10 +67,10 @@ clean_coho <- coho[-1,] %>%
 # Create figures of each population from 1994-2019
 ```{r}
 coho_yr <- coho %>%
-  mutate(date = lubridate::mdy(year)) #Convert to date for tibble
+  mutate(date = lubridate::mdy(year)) #Convert to date for tibble, this didn't work tho so we need to revisit this.
 
 coho_ts <- coho_yr %>%
- as_tsibble(key = NULL, index = year) #Convert to tibble for timeseries
+ as_tsibble(key = NULL, index = year) #Convert to tibble for timeseries, this didn't work tho so we need to revisit this.
 
 pop_alsea <- ggplot(data = coho_ts, aes(x = year, y = alsea)) +
   geom_line(color = "#453781FF") +
@@ -330,7 +329,7 @@ df1 <- data.frame(pop_mean, pop_variance, pop_sd) #combine data into one data fr
 
 #Plot table
 table_df1 <- df1 %>% 
-  kable(col.names = c("Mean", "Variance", "Standard Deviation")) %>% 
+  kable(col.names = c("Population Mean", "Population Variance", "Pop SD")) %>% 
   kable_styling(bootstrap_options = "striped",
                 position = "left", full_width = FALSE)
 
@@ -390,22 +389,28 @@ return_variance <- sapply(returns, var)
 return_sd <- sapply(returns, sd)
 df2 <- data.frame(return_mean, return_variance, return_sd)
 
+table_df2 <- df2 %>% 
+  kable(col.names = c("Returns Mean", "Returns Variance", "Returns SD")) %>% 
+  kable_styling(bootstrap_options = "striped",
+                position = "left", full_width = FALSE)
+
+table_df2
 ```
 
-# Calculation for covariance -- returns
+# Calculation for covariance -- returns (Dmat)
 ```{r, results = TRUE}
 #Calculate covariance
-return_cov <- cov(returns)
+Dmat <- cov(returns) #This is the variance covariance matrix which is Amat (diagonol is the variance). I am renaming return_cov to Dmat so we can input it into Quadprog
 
 # pop_cov
 
 # Only show bottom triangle of covariances
-upper<-return_cov
-upper[upper.tri(return_cov)] <-""
+upper<-Dmat
+upper[upper.tri(Dmat)] <-""
 upper<-as.data.frame(upper)
 upper
 
-return_cov
+Dmat
 ```
 
 # Plotting R(it) -- Returns
@@ -625,6 +630,19 @@ patchwork::plot_layout(rt_yaquina)
 ```
 
 
+#Developing Amat, bvec, and Identity Matrix
+```{r}
+bvec <- data.frame(1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0) #Create bvec for the first row of the Amat
+colnames(bvec) <- c('1':'21') #Rename column headers
+
+line_2_df <- data.frame(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1) #Create a row of 1's
+colnames(line_2_df) <- c('1':'21') #Rename column headers
+
+id_matrix <- diag(21) #Create identity matrix 21x21
+colnames(id_matrix) <- c('1':'21')
+
+Amat<- rbind(bvec, line_2_df, id_matrix) #Create Amat data frame
+```
 
 
 
