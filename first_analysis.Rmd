@@ -644,7 +644,8 @@ colnames(line_2_df) <- c('1':'21') #Rename column headers
 id_matrix <- diag(21) #Create identity matrix 21x21
 colnames(id_matrix) <- c('1':'21')
 
-Amat<- rbind(mean_returns, line_2_df, id_matrix) #Create Amat data frame 
+Amat<- rbind(mean_returns, line_2_df, id_matrix)
+amat_matrix <- as.matrix(Amat) #Create Amat data frame 
 
 ```
 
