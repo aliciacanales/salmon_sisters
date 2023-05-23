@@ -635,13 +635,17 @@ patchwork::plot_layout(rt_yaquina)
 bvec <- data.frame(1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0) #Create bvec for the first row of the Amat
 colnames(bvec) <- c('1':'21') #Rename column headers
 
+mean_returns <- data.frame(0.5195554, 0.8668412, 1.0668467, 0.8037888, 0.8741770, 0.6100251, 0.6810882, 0.4573553, 0.4978172, 0.8339032, 0.0761665, 2.5722876, 0.5931486, 0.2879635, 0.6849828, 0.9460155, 0.7222910, 0.7872894, 0.3794362, 1.0945078, 0.9048277) # making  df with just the mean returns from each population
+colnames(mean_returns) <- c('1':'21') # renaming column headers
+
 line_2_df <- data.frame(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1) #Create a row of 1's
 colnames(line_2_df) <- c('1':'21') #Rename column headers
 
 id_matrix <- diag(21) #Create identity matrix 21x21
 colnames(id_matrix) <- c('1':'21')
 
-Amat<- rbind(bvec, line_2_df, id_matrix) #Create Amat data frame
+Amat<- rbind(mean_returns, line_2_df, id_matrix) #Create Amat data frame 
+
 ```
 
 
