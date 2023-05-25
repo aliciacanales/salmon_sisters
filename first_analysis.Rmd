@@ -23,6 +23,7 @@ library(feasts)
 library(patchwork)
 library(kableExtra)
 library(purrr)
+library(quadprog)
 ```
 
 ### Importing data **this is only the first page of the excel sheet**
@@ -356,7 +357,11 @@ return_table <- return_df %>%
   kable_styling(bootstrap_options = "striped",
                 position = "left", full_width = FALSE)
 
+
 return_table
+mean(return_variance)
+table_df2
+
 ```
 
 # Calculation for covariance -- returns (Dmat)
@@ -594,8 +599,8 @@ patchwork::plot_layout(rt_yaquina)
 
 #Developing Amat, bvec, and Identity Matrix
 ```{r}
-bvec <- data.frame(1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0) #Create bvec for the first row of the Amat
-colnames(bvec) <- c('1':'21') #Rename column headers
+bvec <- data.frame(.774,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0) #Create bvec for the first row of the Amat
+colnames(bvec) <- c('1':'23') #Rename column headers
 
 mean_returns <- data.frame(0.5195554, 0.8668412, 1.0668467, 0.8037888, 0.8741770, 0.6100251, 0.6810882, 0.4573553, 0.4978172, 0.8339032, 0.0761665, 2.5722876, 0.5931486, 0.2879635, 0.6849828, 0.9460155, 0.7222910, 0.7872894, 0.3794362, 1.0945078, 0.9048277) # making  df with just the mean returns from each population
 colnames(mean_returns) <- c('1':'21') # renaming column headers
@@ -607,13 +612,33 @@ id_matrix <- diag(21) #Create identity matrix 21x21
 colnames(id_matrix) <- c('1':'21')
 
 Amat<- rbind(mean_returns, line_2_df, id_matrix)
-amat_matrix <- as.matrix(Amat) #Create Amat data frame 
+
+#Dmat_new <- Dmat
+#Dmat_new[12,12]=10
+
+amat_matrix <- t(as.matrix(Amat)) #Create Amat data frame 
+
+bvec_matrix <- t(as.matrix(bvec))
+
+
+dvec<- t(as.matrix(rep(0,21)))
+```
+
+
+```{r}
+y<-solve.QP(Dmat, dvec, amat_matrix, bvec_matrix, meq = 2)
+y
+
+sum(y$solution) #1 var_star = .549
+max(y$solution) #high returns low variance for largest
+
+##Clean up code and run it as a loop to try to create graph
+##Change bvec with new Rbar
+##Table of all Rbar and corresponding $values and plot
 
 
 
 ```
-
-
 
 
 
