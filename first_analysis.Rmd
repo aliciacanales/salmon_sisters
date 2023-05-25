@@ -334,23 +334,28 @@ returns <- data.frame(apply(coho[2:22], 2, calculate_returns))
 ```
 
 
-
-### Returns mean, sd, variance
+### Returns mean, returns sd, returns variance
 ```{r}
 ## calculation for returns
 
 ## means of the returns for each population
-return_mean <- sapply(returns, mean)
+pop_return_mean <- sapply(returns, mean)
 
 ## mean of ALL means -- should return one number: 0.774
-mean(return_mean)
+mean_returns <- mean(pop_return_mean)
 
-return_variance <- sapply(returns, var)
-return_sd <- sapply(returns, sd)
+
+## variance of the returns
+pop_return_variance <- sapply(returns, var)
+
+## mean of ALL variances -- should return one number: 6.889
+mean_variance <- mean(return_variance)
+
+pop_return_sd <- sapply(returns, sd)
 
 
 ## putting everything into a data frame and nice table
-return_df <- data.frame(return_mean, return_variance, return_sd)
+return_df <- data.frame(pop_return_mean, pop_return_variance, pop_return_sd)
 
 return_table <- return_df %>% 
   kable(col.names = c("Returns Mean", "Returns Variance", "Returns SD")) %>% 
@@ -359,29 +364,28 @@ return_table <- return_df %>%
 
 
 return_table
-mean(return_variance)
-table_df2
-
 ```
 
-# Calculation for covariance -- returns (Dmat)
+### Covariance of returns -- (Dmat)
 ```{r, results = TRUE}
-#Calculate covariance
-Dmat <- cov(returns) #This is the variance covariance matrix which is Amat (diagonol is the variance). I am renaming return_cov to Dmat so we can input it into Quadprog
+
+## Calculate variance covariance matrix. 
+dmat <- cov(returns) #This is the variance covariance matrix which is amat (diagonal is the variance) that will be inputted into Quadprog
 
 # pop_cov
 
-# Only show bottom triangle of covariances
-upper<-Dmat
-upper[upper.tri(Dmat)] <-""
+## Only show bottom triangle of covariances
+upper<-dmat
+upper[upper.tri(dmat)] <-""
 upper<-as.data.frame(upper)
 upper
 
-Dmat
+dmat
 ```
 
-# Plotting R(it) -- Returns
+### Plotting R(it) -- Returns
 ```{r}
+
 # combining date column to new returns df
 returns_yr<- cbind(returns, coho_yr$year[-1]) %>% 
   rename('year' = 'coho_yr$year[-1]')
@@ -581,7 +585,7 @@ rt_yaquina <- ggplot(data = return_ts, aes(x = year, y = yaquina)) +
 
 
 
-#Panel of figures of R(it) - Annual returns for each independent population
+### Panel of figures of R(it) - Annual returns for each independent population
 ```{r}
 patchwork::plot_layout(rt_alsea + rt_beaver + rt_coos + rt_coquille)
 
@@ -597,36 +601,45 @@ patchwork::plot_layout(rt_yaquina)
 ```
 
 
-#Developing Amat, bvec, and Identity Matrix
+### Developing amat, bvec, dmat, and dvec
 ```{r}
-bvec <- data.frame(.774,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0) #Create bvec for the first row of the Amat
-colnames(bvec) <- c('1':'23') #Rename column headers
 
-mean_returns <- data.frame(0.5195554, 0.8668412, 1.0668467, 0.8037888, 0.8741770, 0.6100251, 0.6810882, 0.4573553, 0.4978172, 0.8339032, 0.0761665, 2.5722876, 0.5931486, 0.2879635, 0.6849828, 0.9460155, 0.7222910, 0.7872894, 0.3794362, 1.0945078, 0.9048277) # making  df with just the mean returns from each population
-colnames(mean_returns) <- c('1':'21') # renaming column headers
+## first row of amat
+mean_returns_df <- data.frame(0.5195554, 0.8668412, 1.0668467, 0.8037888, 0.8741770, 0.6100251, 0.6810882, 0.4573553, 0.4978172, 0.8339032, 0.0761665, 2.5722876, 0.5931486, 0.2879635, 0.6849828, 0.9460155, 0.7222910, 0.7872894, 0.3794362, 1.0945078, 0.9048277) # making  df with just the mean returns from each population
+colnames(mean_returns_df) <- c('1':'21') # renaming column headers
 
+## second row of amat
 line_2_df <- data.frame(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1) #Create a row of 1's
 colnames(line_2_df) <- c('1':'21') #Rename column headers
 
+## bottom of amat
 id_matrix <- diag(21) #Create identity matrix 21x21
 colnames(id_matrix) <- c('1':'21')
 
-Amat<- rbind(mean_returns, line_2_df, id_matrix)
+amat<- rbind(mean_returns_df, line_2_df, id_matrix)
 
-#Dmat_new <- Dmat
-#Dmat_new[12,12]=10
+## bvec with our mean of all pop returns 
+bvec <- data.frame(mean_returns,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0) 
+colnames(bvec) <- c('1':'23') #Rename column headers
 
-amat_matrix <- t(as.matrix(Amat)) #Create Amat data frame 
+## dmat
+dmat <- cov(returns)
+
+dmat_new <- dmat
+dmat_new[12,12]=10
+
+
+## making everything as a matrix for quadprog
+amat_matrix <- t(as.matrix(amat)) #Create amat data frame 
 
 bvec_matrix <- t(as.matrix(bvec))
 
-
-dvec<- t(as.matrix(rep(0,21)))
+dvec_matrix <- t(as.matrix(rep(0,21)))
 ```
 
-
+### Running quadprog
 ```{r}
-y<-solve.QP(Dmat, dvec, amat_matrix, bvec_matrix, meq = 2)
+y <- solve.QP(dmat, dvec_matrix, amat_matrix, bvec_matrix, meq = 2)
 y
 
 sum(y$solution) #1 var_star = .549
@@ -635,8 +648,6 @@ max(y$solution) #high returns low variance for largest
 ##Clean up code and run it as a loop to try to create graph
 ##Change bvec with new Rbar
 ##Table of all Rbar and corresponding $values and plot
-
-
 
 ```
 
