@@ -349,7 +349,7 @@ mean_returns <- mean(pop_return_mean)
 pop_return_variance <- sapply(returns, var)
 
 ## mean of ALL variances -- should return one number: 6.889
-mean_variance <- mean(return_variance)
+mean_variance <- mean(pop_return_variance)
 
 pop_return_sd <- sapply(returns, sd)
 
