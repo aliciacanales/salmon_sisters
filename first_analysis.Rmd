@@ -647,6 +647,8 @@ max(y$solution) #high returns low variance for largest
 
 ### Mapping 
 ```{r}
+## im just going to use population returns for each Rbar just to run something
+
 
 ```
 
