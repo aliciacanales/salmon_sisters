@@ -637,7 +637,8 @@ y <- solve.QP(dmat, dvec_matrix, amat_matrix, bvec_matrix, meq = 2)
 y
 
 sum(y$solution) #1 var_star = .549
-max(y$solution) #high returns low variance for largest
+r_max <- max(y$solution) #high returns low variance for largest
+r_min <- min(y$solution) ## so this min is a negative number so I should make it .0001 right?
 
 ##Clean up code and run it as a loop to try to create graph
 ##Change bvec with new Rbar
@@ -647,7 +648,14 @@ max(y$solution) #high returns low variance for largest
 
 ### Mapping 
 ```{r}
-## im just going to use population returns for each Rbar just to run something
+## i made r_max then highest returns and r_min the lowest of terms. I think this is what nathan said to do. 
+
+bvec_max_matrix <- bvec 
+
+bvec_max_matrix[1,1] = r_max
+y <- solve.QP(dmat, dvec_matrix, amat_matrix, bvec_max_matrix, meq = 2)
+y ## $value = 0.13559
+
 
 
 ```
