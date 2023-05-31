@@ -637,8 +637,9 @@ y <- solve.QP(dmat, dvec_matrix, amat_matrix, bvec_matrix, meq = 2)
 y
 
 sum(y$solution) #1 var_star = .549
-r_max <- max(y$solution) #high returns low variance for largest
-r_min <- min(y$solution) ## so this min is a negative number so I should make it .0001 right?
+r_list <- c(r_max = max(y$solution), 
+            r_min = min(y$solution)) #high returns low variance for largest
+ ## so this min is a negative number so I should make it .0001 right?
 
 ##Clean up code and run it as a loop to try to create graph
 ##Change bvec with new Rbar
@@ -656,7 +657,14 @@ bvec_max_matrix[1,1] = r_max
 y <- solve.QP(dmat, dvec_matrix, amat_matrix, bvec_max_matrix, meq = 2)
 y ## $value = 0.13559
 
+## made a function for solve.QP
+mpt_fun <- function(r, dmat, dvec_matrix, amat_matrix, bvec_matrix) {
+  y = solve.QP(dmat, dvec_matrix, amat_matrix, bvec_max_matrix, meq = 2)
+  return(y)
+}
 
+## i thought this is something we could do.. it doesnt run because the error reads that the length of the list i want to feed into the function is too long?
+df <- map(.x = r_list , .f= mpt_fun(r_list, dmat, dvec_matrix, amat_matrix, bvec_matrix))
 
 ```
 
