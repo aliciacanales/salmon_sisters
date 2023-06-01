@@ -638,8 +638,9 @@ y <- solve.QP(dmat, dvec_matrix, amat_matrix, bvec_matrix, meq = 2)
 y
 
 sum(y$solution) #1 var_star = .549
-r_list <- c(r_max = max(y$solution), 
-            r_min = min(y$solution)) #high returns low variance for largest
+r_list <- seq(max(), min(), by = 0.01) 
+
+#high returns low variance for largest
  ## so this min is a negative number so I should make it .0001 right?
 
 ##Clean up code and run it as a loop to try to create graph
