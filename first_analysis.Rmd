@@ -640,7 +640,7 @@ y
 
 sum(y$solution) #1 var_star = .549
 #mean_list <- as.numeric(seq(min(pop_return_mean_df),max(pop_return_mean_df), length.out = 100)) #this line is not running, so using an alternative mean list (next line)
-mean_list <- seq(1,2,by=0.5) 
+mean_list <- seq(0.1,2.5,length.out=100) 
 min(pop_return_mean_df)
 max(pop_return_mean_df)
 #high returns low variance for largest
@@ -696,7 +696,8 @@ mu_fcn<-function(weights,means){
 #Notice the var_res column is simply double the var column which came from solve.QP
 var_out<-solution %>% 
   nest(weights=w1:w21) %>% #I changed this from "w1:w3" to "w1:w21" and then it ran. Was that okay to do?
-  mutate(var_res=map_dbl(.x=weights,~var_df_fcn(.x,dmat)))
+  mutate(var_res=var*2) %>% 
+  mutate(port_mean = mean_list)
 
 
 ```
@@ -705,7 +706,8 @@ var_out<-solution %>%
 ```{r}
 
 n=1000
-nvar=length(pop_return_mean_df$pop_return_mean)
+nvar=(length(pop_return_mean_df_t))
+#nvar=length(pop_return_mean_df$pop_return_mean)
 set.seed(123)
 rand<-matrix(0,nrow=n,ncol=nvar+2)
 for(i in 1:n){
@@ -715,11 +717,11 @@ for(i in 1:n){
  
   rand[i,nvar+1]<-var_fcn(rand[i,1:nvar],dmat)
   
-  rand[i,nvar+2]<-mu_fcn(rand[i,1:nvar],pop_return_mean_df)
+  rand[i,nvar+2]<-mu_fcn(rand[i,1:nvar],pop_return_mean_df_t) #do we need to use the transposed version
   
 } ##getting an error in here "can't run .temp" - idk what temp is?
 
-colnames(rand)<-c(paste0("weight_",1:length(pop_return_mean_df)),"var","mu")
+colnames(rand)<-c(paste0("weight_",1:length(pop_return_mean_df_t)),"var","mu")
 ```
 
 
@@ -727,13 +729,14 @@ colnames(rand)<-c(paste0("weight_",1:length(pop_return_mean_df)),"var","mu")
 hold=217#Chosen to best show case results
 
 
-p1<-ggplot(as.data.frame(rand),aes(x=var,y=mu))+
-  geom_point(color="grey",alpha=0.5)+
-  geom_point(aes(x=rand[hold,4],y=rand[hold,5]),size=3)+
-  geom_line(data=var_out,aes(y=mu_list,x=var_res))+
-  annotate("label",x=.8,y=1.75,label=paste("Weights currently:\n","(",paste(round(rand[hold,1:3],3),collapse = ", "),")"))+
-  xlim(-0.5,1.5)+
-  ylim(0,3.5)+
+p1<-ggplot(data=var_out,aes(y=port_mean,x=var_res))+
+  #geom_point(color="grey",alpha=0.5)+
+  #geom_point(aes(x=rand[hold,4],y=rand[hold,5]),size=3)+
+  #geom_line()+
+  geom_point()
+  #annotate("label",x=.8,y=1.75,label=paste("Weights currently:\n","(",paste(round(rand[hold,1:3],3),collapse = ", "),")"))+
+  #xlim(-0.5,1.5)+
+  #ylim(0,3.5)+
   theme_classic()
 
 p1
@@ -741,6 +744,16 @@ p1
 
 
 
+```{r}
+var_keep=which.min(abs(var_out$var_res-rand[hold,4]))
+mean_keep=which.min(abs(mu_list-rand[hold,5]))
+
+p2<-p1+ annotate("segment",x=rand[hold,4],y=rand[hold,5],xend=var_out$var_res[var_keep],yend=mu_list[var_keep],color="red")+
+  annotate("pointrange",x=var_out$var_res[var_keep],y=mu_list[var_keep],ymin=rand[hold,5],ymax=mu_list[mean_keep],color="red")+
+  annotate("label",x=0.35,y=2.8,label=paste("Mean maximizing weights:\n","(",paste(round(front$solution[[var_keep]],3),collapse=", "),")"),color="red")
+
+p2
+```
 
 
 
