@@ -630,6 +630,7 @@ amat_matrix <- t(as.matrix(amat)) #Create amat data frame
 bvec_matrix <- t(as.matrix(bvec))
 
 dvec_matrix <- t(as.matrix(rep(0,21)))
+dvec <- rep(0,21)
 ```
 
 ### Running quadprog
@@ -638,8 +639,9 @@ y <- solve.QP(dmat, dvec_matrix, amat_matrix, bvec_matrix, meq = 2)
 y
 
 sum(y$solution) #1 var_star = .549
-r_list <- seq(max(), min(), by = 0.01) 
-
+mean_list <- as.data.frame(seq(min(pop_return_mean_df),max(pop_return_mean_df), length.out = 100)) 
+min(pop_return_mean_df)
+max(pop_return_mean_df)
 #high returns low variance for largest
  ## so this min is a negative number so I should make it .0001 right?
 
@@ -651,25 +653,71 @@ r_list <- seq(max(), min(), by = 0.01)
 
 ### Mapping 
 ```{r}
-## i made r_max then highest returns and r_min the lowest of terms. I think this is what nathan said to do. 
-
-bvec_max_matrix <- bvec 
-
-bvec_max_matrix[1,1] = r_max
-y <- solve.QP(dmat, dvec_matrix, amat_matrix, bvec_max_matrix, meq = 2)
-y ## $value = 0.13559
 
 ## made a function for solve.QP
-mpt_fun <- function(r, dmat, dvec_matrix, amat_matrix, bvec_matrix) {
-  y = solve.QP(dmat, dvec_matrix, amat_matrix, bvec_max_matrix, meq = 2)
-  return(y)
+mpt_fun <- function(x) {
+  bvec_m <- c(x, 1,rep(0, 21))
+  y = solve.QP(dmat, dvec_matrix, amat_matrix, bvec_m, meq = 2)
+  
+  return(list(solution = y$solution, var = y$value))
 }
 
-## i thought this is something we could do.. it doesnt run because the error reads that the length of the list i want to feed into the function is too long?
-df <- map(.x = r_list , .f= mpt_fun(r_list, dmat, dvec_matrix, amat_matrix, bvec_matrix))
+
+
+front = map(list(mean_list), ~mpt_fun(.x)) %>% transpose()
+
+## contains the weights for each stream (population)
+solution <- as.data.frame(pluck(front$solution)) %>% 
+  t() %>% 
+  as.data.frame() %>% 
+  rename_with(~paste0('w', 1:length(pop_return_mean_df))) %>% 
+  mutate(var = t(as.data.frame(pluck(front$var)))[,1])
+
+var_fcn <- function(weights,dmat){
+  temp = as.matrix(dmat) %>% as.matrix(weights)
+  out = t(as.matrix(weights)) %>% temp
+  return(out)
+}
+
+var_df_fcn<-function(weights,cov){
+  temp=as.matrix(dmat) %*% t(as.matrix(weights))
+  out=as.matrix(weights)%*%temp
+  return(out)
+}
+
+mu_fcn<-function(weights,means){
+  out=weights %*% means
+  return(out)
+}
+
+#Notice the var_res column is simply double the var column which came from solve.QP
+var_out<-solution %>% 
+  nest(weights=w1:w3) %>% 
+  mutate(var_res=map_dbl(.x=weights,~var_df_fcn(.x,dmat)))
+
 
 ```
 
+### Natural states
+```{r}
+
+n=1000
+nvar=length(pop_return_mean_df$pop_return_mean)
+set.seed(123)
+rand<-matrix(0,nrow=n,ncol=nvar+2)
+for(i in 1:n){
+  pull=runif(21)
+  rand[i,1:nvar]<-pull/sum(pull)
+  
+ 
+  rand[i,nvar+1]<-var_fcn(rand[i,1:nvar],dmat)
+  
+  rand[i,nvar+2]<-mu_fcn(rand[i,1:nvar],pop_return_mean_df)
+  
+}
+
+colnames(rand)<-c(paste0("weight_",1:length(pop_return_mean_df)),"var","mu")
+```
 
 
 
