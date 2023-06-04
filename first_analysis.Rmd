@@ -742,6 +742,9 @@ p1<-ggplot(data=var_out,aes(y=port_mean,x=var_res))+
 p1
 ```
 
+```{r}
+
+```
 
 
 ```{r}
