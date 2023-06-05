@@ -654,7 +654,6 @@ max(pop_return_mean_df)
 
 ### Mapping 
 ```{r}
-
 ## made a function for solve.QP
 mpt_fun <- function(x) {
   bvec_m <- c(x, 1,rep(0, 21))
@@ -677,7 +676,10 @@ solution <- as.data.frame(pluck(front$solution)) %>%
   mutate(var = t(as.data.frame(pluck(front$var)))[,1])
 
 rownames(solution) <- 1:nrow(solution) #rename rows
+```
 
+#function to calcualte weights
+```{r}
 var_fcn <- function(weights,dmat){
   temp = as.matrix(dmat) %>% as.matrix(weights)
   out = t(as.matrix(weights)) %>% temp
@@ -744,7 +746,6 @@ p1<-ggplot(data=var_out,aes(y=port_mean,x=var_res))+
 p1
 ```
 
-
 ```{r}
 p_2019<-ggplot(data=var_out,aes(y=port_mean,x=var_res))+
   #geom_point(color="grey",alpha=0.5)+
@@ -759,8 +760,6 @@ p_2019<-ggplot(data=var_out,aes(y=port_mean,x=var_res))+
 
 p_2019
 ```
-
-
 
 ```{r}
 p_test<-ggplot(data=var_out,aes(y=port_mean,x=var_res))+
