@@ -640,7 +640,7 @@ y
 
 sum(y$solution) #1 var_star = .549
 #mean_list <- as.numeric(seq(min(pop_return_mean_df),max(pop_return_mean_df), length.out = 100)) #this line is not running, so using an alternative mean list (next line)
-mean_list <- seq(0.1,2.5,length.out=100) 
+mean_list <- seq(0.1,2.5,length.out=100)
 min(pop_return_mean_df)
 max(pop_return_mean_df)
 #high returns low variance for largest
@@ -664,8 +664,8 @@ mpt_fun <- function(x) {
 }
 
 
-
-front = map(mean_list, ~mpt_fun(.x)) %>% transpose()
+front = map(mean_list, ~mpt_fun(.x)) %>%
+  transpose()
 
 pop_return_mean_df_t <- t(pop_return_mean_df) #transpose the df so that we can rename each of the pop columns
 
@@ -675,6 +675,8 @@ solution <- as.data.frame(pluck(front$solution)) %>%
   as.data.frame() %>% 
   rename_with(~paste0('w', 1:length(pop_return_mean_df_t))) %>% #This line was not running because we need to transpose the pop_return_mean_df so that the length would fit. I did this in a quick way, but should probs clean it up later
   mutate(var = t(as.data.frame(pluck(front$var)))[,1])
+
+rownames(solution) <- 1:nrow(solution) #rename rows
 
 var_fcn <- function(weights,dmat){
   temp = as.matrix(dmat) %>% as.matrix(weights)
@@ -743,7 +745,22 @@ p1
 ```
 
 ```{r}
+p_test<-ggplot(data=var_out,aes(y=port_mean,x=var_res))+
+  #geom_point(color="grey",alpha=0.5)+
+  #geom_point(aes(x=rand[hold,4],y=rand[hold,5]),size=3)+
+  #geom_line()+
+  geom_line() +
+  #geom_point(aes(x=1.14400840, y=1.39769)) + 2017
+  geom_point(aes(x=0.7743007, y=0.5501547)) + #mean of all reutrns (what we first ran QuadProg on)
+  annotate("label",x=0.77,y=0.55,label=paste("mean of mean returns weights x=0.774 y=0.550"), hjust=-.05)+
+  geom_point(aes(x=0.21176523, y=0.1335914)) + # 2018 returns mpt_fun(0.21176523) = var*2
+  annotate("label",x=0.21,y=0.133,label=paste("2018 Weights currently x=0.21, y=0.133"), hjust=-.05)+#:\n","(",paste(round(rand[hold,1:21],3),collapse = ", "),")"), hjust=-0.1)+
+  #annotate("label",x=.8,y=1.75,label=paste("Weights currently:\n","(",paste(round(rand[hold,1:3],3),collapse = ", "),")"))+
+  #xlim(-0.5,1.5)+
+  #ylim(0,3.5)+
+  theme_classic()
 
+p_test
 ```
 
 
@@ -800,6 +817,14 @@ y <- solve.QP(dmat, dvec_matrix, amat_matrix, bvec_matrix, meq = 2)
 y
 ```
 
+```{r}
+rowMeans(returns) #year 2019 = -0.11351862 ((mean return of all 21 assets in 2019)
+
+mpt_fun(1.1)
+mpt_fun(-0.1) #won't plot becuase below threshold of means that we set
+mpt_fun(0.21176523) #var = 0.1335914 2018 returns
+mpt_fun(1.14400840)
+```
 
 
 
