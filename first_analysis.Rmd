@@ -640,7 +640,7 @@ y
 
 sum(y$solution) #1 var_star = .549
 #mean_list <- as.numeric(seq(min(pop_return_mean_df),max(pop_return_mean_df), length.out = 100)) #this line is not running, so using an alternative mean list (next line)
-mean_list <- seq(0.1,2.5,length.out=100)
+mean_list <- seq(0.1,2.5,length.out=1000)
 min(pop_return_mean_df)
 max(pop_return_mean_df)
 #high returns low variance for largest
@@ -747,7 +747,7 @@ hold=1#Chosen to best show case results #How do we find what the 2019 data
 
 p1<-ggplot(as.data.frame(rand),aes(x=var,y=mu))+
   geom_point(color="grey",alpha=0.5)+
-  geom_point(aes(x=2.656514,y=0.7697386),size=3)+
+  geom_point(aes(x=3.084847,y=0.7088897),size=3)+
   geom_line(data=var_out,aes(y=port_mean,x=var_res))+
   annotate("label",x=6.8,y=.75,label=paste("Weights currently:\n","(",paste(round(rand[hold,1:6],3),collapse = ", "),")"))+
   xlim(-0.5,10)+
@@ -760,13 +760,15 @@ p1
 
 ```{r}
 #This is to show the point that we initially calc'd using rand[1,1:21] - first row
+var_2019 <-3.084847 
+mean_2019 <- 0.7088897
 
 p_a<-ggplot(data=var_out,aes(y=port_mean,x=var_res))+
   #geom_point(color="grey",alpha=0.5)+
   #geom_point(aes(x=rand[hold,4],y=rand[hold,5]),size=3)+
   #geom_line()+
-  geom_line() +
-  geom_point(aes(x=2.656514, y=0.7697386)) +
+  geom_path() +
+  geom_point(aes(x=var_2019, y=mean_2019)) +
   annotate("label",x=17,y=.7,label=paste("Weights currently:\n","(",paste(round(rand[1,1:10],2),collapse = ", "),")"))+
   #xlim(-0.5,1.5)+
   #ylim(0,3.5)+
@@ -776,14 +778,23 @@ p_a
 ```
 
 ```{r}
-var_keep=which.min(abs(var_out$var_res-rand[hold,4]))
-mean_keep=which.min(abs(mean_list-rand[hold,5]))
+var_2019 <-3.084847 
+mean_2019 <- 0.7088897
 
-p2 <- p1 + annotate("segment",x=2.657,y=0.7697,xend=var_out$var_res[var_keep],yend=mean_list[var_keep],color="red")+
+var_keep=which.min(abs(var_out$var_res-var_2019))
+mean_keep=which.min(abs(mean_list-mean_2019))
+
+
+p2 <- p_a + annotate("segment",x=var_2019,y=mean_2019,xend=var_out$var_res[var_keep],yend=mean_list[var_keep],color="red")
   #annotate("pointrange",x=var_out$var_res[var_keep],y=mu_list[var_keep],ymin=rand[hold,5],ymax=mu_list[mean_keep],color="red")+
   #annotate("label",x=0.35,y=2.8,label=paste("Mean maximizing weights:\n","(",paste(round(front$solution[[var_keep]],3),collapse=", "),")"),color="red")
 
 p2
+
+
+weights_2019 <-df_2019/tot_pop ## make this into a graph for 2019 
+
+var_out$weights[var_keep] ## showing us the weights for 2019 round them 
 ```
 
 
