@@ -727,6 +727,7 @@ for(i in 1:n){
 colnames(rand)<-c(paste0("weight_",1:length(pop_return_mean_df_t)),"var","mu")
 ```
 
+#Initial plot
 ```{r}
 p_initial<-ggplot(data=var_out,aes(y=port_mean,x=var_res))+
   #geom_point(color="grey",alpha=0.5)+
@@ -768,7 +769,8 @@ p_a<-ggplot(data=var_out,aes(y=port_mean,x=var_res))+
   #geom_point(aes(x=rand[hold,4],y=rand[hold,5]),size=3)+
   #geom_line()+
   geom_path() +
-  geom_point(aes(x=var_2019, y=mean_2019)) +
+  geom_point(aes(x=var_2019, y=mean_2019), size=2) +
+  labs(x="Variance", y="Mean Return")+
   #xlim(-0.5,1.5)+
   #ylim(0,3.5)+
   theme_classic()
