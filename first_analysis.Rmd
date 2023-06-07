@@ -769,7 +769,6 @@ p_a<-ggplot(data=var_out,aes(y=port_mean,x=var_res))+
   #geom_line()+
   geom_path() +
   geom_point(aes(x=var_2019, y=mean_2019)) +
-  annotate("label",x=17,y=.7,label=paste("Weights currently:\n","(",paste(round(rand[1,1:10],2),collapse = ", "),")"))+
   #xlim(-0.5,1.5)+
   #ylim(0,3.5)+
   theme_classic()
@@ -805,7 +804,31 @@ p3<-p2+ annotate("segment",x=var_2019,y=mean_2019,xend=var_out$var_res[mean_keep
 p3
 
 ```
+### Weights table
+```{r}
 
+weights_table_2019 <- weights_2019 %>% 
+  round(3) %>% 
+  kable() %>% 
+  kable_styling(bootstrap_options = "striped",
+                position = "center", full_width = FALSE)
+
+weights_table_2019 # weights for 2019 in a kable
+
+
+weights_mean_df<- as.data.frame(var_out$weights[var_keep]) 
+
+mean_2019_eff_f <- weights_mean_df %>%
+  round(3) %>% 
+  kable() %>% 
+  kable_styling(bootstrap_options = "striped",
+                position = "center", full_width = FALSE)
+mean_2019_eff_f ## weights for 2019 when variance is held
+
+
+weights_df<- as.data.frame(var_out$weights[mean_keep])
+weights_df ## weights for 2019 when mean is held
+```
 
 
 
