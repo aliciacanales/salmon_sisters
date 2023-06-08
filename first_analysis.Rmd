@@ -810,7 +810,6 @@ p3
 ```{r}
 #table 1
 table_1_2019 <- weights_2019 %>% 
-  round(3) %>% 
   kable() %>% 
   kable_styling(bootstrap_options = "striped",
                 position = "center", full_width = FALSE)
@@ -818,30 +817,38 @@ table_1_2019 <- weights_2019 %>%
 table_1_2019 # weights for 2019 in a kable
 
 #Table 2
-weights_mean_df<- as.data.frame(var_out$weights[var_keep])
+weights_mean_df<- as.data.frame(var_out$weights[var_keep]) %>% 
+  round(3)
 
 colnames(weights_mean_df) <- c("alsea","beaver","coos","coquille","floras","lower_umpqua","middle_umpqua","necanicum","nehalem","nestucca","north_umpqua","salmon","siletz","siltcoos","siuslaw","sixes","south_umpqua","tahkenitch","tenmile","tillamook","yaquina") #check that naming is ok
 
 sum2 <- rbind(weights_2019, weights_mean_df)
 
 table_2_2019 <- sum2 %>%
-  round(3) %>% 
   kable() %>% 
   kable_styling(bootstrap_options = "striped",
                 position = "center", full_width = FALSE)
 table_2_2019 ## weights for 2019 when variance is held
 
 #Table 3
-weights_var_df<- as.data.frame(var_out$weights[mean_keep])
+weights_var_df<- as.data.frame(var_out$weights[mean_keep]) %>% 
+  round(3)
 colnames(weights_var_df) <- c("alsea","beaver","coos","coquille","floras","lower_umpqua","middle_umpqua","necanicum","nehalem","nestucca","north_umpqua","salmon","siletz","siltcoos","siuslaw","sixes","south_umpqua","tahkenitch","tenmile","tillamook","yaquina")
 
-sum3 <- rbind(weights_2019, weights_mean_df, weights_var_df)
+sum3 <- rbind(weights_2019, weights_mean_df, weights_var_df) %>% 
+  rename_with(str_to_title)
 
-table_3_2019 <- sum3 %>%
-  round(3) %>% 
+sum3$Weights <- c('2019', 'Scenario 1', 'Scenario 2')
+
+sum3<- sum3 %>%     
+relocate(Weights, .before = 'Alsea')
+
+
+
+table_3_2019 <- sum3 %>% 
   kable() %>% 
   kable_styling(bootstrap_options = "striped",
-                position = "center", full_width = FALSE)
+                position = "center", full_width = FALSE, html_font = 'Cambria', font_size = 15)
 table_3_2019 ## weights for 2019 when variance is held
 
 sum(var_out$weights[mean_keep])
