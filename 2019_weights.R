@@ -3,7 +3,7 @@ df_2019 <- coho %>%
   select(-year)
 
 tot_pop <- sum(df_2019)
-weights_2019 <-df_2019/tot_pop
+weights_2019 <-round((df_2019/tot_pop),3)
 sum(weights_2019)
 
 var_df_fcn(weights_2019, dmat)
