@@ -866,6 +866,8 @@ weights_df ## weights for 2019 when mean is held
 ## bias to more healthy streams
 
 ## histogram of numbers bigger with 1 on the right on the graphs
+## plotting the watershed along the efficient frontier could visualize which streams have the most impact
+## maybe jsut giving them a tool (shiny)
 ```
 
 
