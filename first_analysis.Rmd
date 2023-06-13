@@ -841,7 +841,7 @@ sum3 <- rbind(weights_2019, weights_mean_df, weights_var_df) %>%
   round(3) %>% 
   rename_with(str_to_title)
 
-sum3$Weights<- c('2019', 'Scenario 1', 'Scenario 2')
+sum3$Weights<- c('2019', 'Scenario_1', 'Scenario_2')
 
 sum3<- sum3 %>%     
 relocate(Weights, .before = 'Alsea')
