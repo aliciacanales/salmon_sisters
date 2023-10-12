@@ -635,7 +635,7 @@ dvec <- rep(0,21)
 
 ### Running quadprog
 ```{r}
-y <- solve.QP(dmat, dvec_matrix, amat_matrix, bvec_matrix, meq = 2)
+y <- solve.QP(dmat, dvec_matrix, amat_matrix, bvec_matrix, meq = 2) #meq=2 symbolizes that we want all of the weights to equal 1
 y
 
 sum(y$solution) #1 var_star = .549
